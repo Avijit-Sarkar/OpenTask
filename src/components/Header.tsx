@@ -38,11 +38,11 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="app-header">
       {/* Brand */}
       <div className="brand-section">
-        <div className="brand-icon">
-          <Activity size={15} color="white" />
+        <div className="brand-icon" style={{ width: 32, height: 32, padding: 0, overflow: 'hidden', background: 'transparent', border: 'none' }}>
+          <img src="/app-icon.png" alt="OpenTask" style={{ width: 32, height: 32, borderRadius: 6, objectFit: 'cover' }} />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-          <span className="brand-name">OpenTask</span>
+          <span className="brand-name" style={{ fontSize: '15px' }}>OpenTask</span>
           <span className="brand-version">v0.1</span>
         </div>
       </div>
@@ -52,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
         {stats ? (
           <>
             <div className="metric-chip" title={`${cpuPct.toFixed(1)}% across ${stats.cpu_count} cores`}>
-              <Cpu size={13} className="metric-chip-icon" color={cpuColor(cpuPct)} />
+              <Cpu size={16} className="metric-chip-icon" color={cpuColor(cpuPct)} />
               <span className="metric-chip-label">CPU</span>
               <span className="metric-chip-value" style={{ color: cpuColor(cpuPct) }}>
                 {formatCpu(cpuPct)}
@@ -66,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             <div className="metric-chip" title={`${formatBytes(stats.used_memory)} / ${formatBytes(stats.total_memory)}`}>
-              <MemoryStick size={13} className="metric-chip-icon" color={ramColor(ramPct)} />
+              <MemoryStick size={16} className="metric-chip-icon" color={ramColor(ramPct)} />
               <span className="metric-chip-label">RAM</span>
               <span className="metric-chip-value" style={{ color: ramColor(ramPct) }}>
                 {formatBytes(stats.used_memory)}
@@ -80,7 +80,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             <div className="metric-chip" title="Disk used / total">
-              <HardDrive size={13} className="metric-chip-icon" color="var(--amber)" />
+              <HardDrive size={16} className="metric-chip-icon" color="var(--amber)" />
               <span className="metric-chip-label">Disk</span>
               <span className="metric-chip-value" style={{ color: 'var(--amber)' }}>
                 {stats.total_disk_space > 0
@@ -90,7 +90,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             <div className="metric-chip" title="Processes running">
-              <Layers size={13} className="metric-chip-icon" color="var(--purple)" />
+              <Layers size={16} className="metric-chip-icon" color="var(--purple)" />
               <span className="metric-chip-label">Procs</span>
               <span className="metric-chip-value" style={{ color: 'var(--purple)', fontVariantNumeric: 'tabular-nums' }}>
                 {stats.process_count}
@@ -105,14 +105,14 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Controls */}
       <div className="header-controls">
         <div className="search-wrap">
-          <Search size={13} className="search-icon-pos" />
+          <Search size={15} className="search-icon-pos" />
           <input
             id="process-search"
-            className="search-input"
             type="text"
-            placeholder="Search processes…"
+            className="search-input"
+            placeholder="Search PID or process…"
             value={searchTerm}
-            onChange={e => onSearchChange(e.target.value)}
+            onChange={(e) => onSearchChange(e.target.value)}
           />
         </div>
 
@@ -126,7 +126,7 @@ export const Header: React.FC<HeaderProps> = ({
             { value: 2000, label: 'Every 2s' },
             { value: 3000, label: 'Every 3s' },
             { value: 5000, label: 'Every 5s' },
-            { value: 0,    label: 'Paused' },
+            { value: 0, label: 'Paused' },
           ]}
         />
 
