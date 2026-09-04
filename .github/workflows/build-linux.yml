@@ -1,0 +1,108 @@
+name: Build Linux Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release Tag (e.g. v0.1.0)'
+        required: false
+        default: 'v0.1.0'
+
+jobs:
+  build-linux:
+    name: Build Linux Desktop Packages (.deb & .tar.gz)
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libssl-dev \
+            libgtk-3-dev \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+
+      - name: Build Application Binary and Deb Package
+        run: npx tauri build
+
+      - name: Prepare Tarball Release Archive
+        run: |
+          mkdir -p release-tar/opentask
+          cp src-tauri/target/release/opentask release-tar/opentask/
+          cp public/app-icon.png release-tar/opentask/icon.png 2>/dev/null || true
+          cp README.md release-tar/opentask/ 2>/dev/null || true
+          cp LICENSE release-tar/opentask/ 2>/dev/null || true
+          
+          # Create desktop shortcut launcher entry
+          cat << 'EOF' > release-tar/opentask/opentask.desktop
+          [Desktop Entry]
+          Name=OpenTask
+          Comment=System Monitoring and Process Manager
+          Exec=opentask
+          Icon=icon
+          Terminal=false
+          Type=Application
+          Categories=System;Monitor;Utility;
+          EOF
+
+          cd release-tar
+          tar -czvf ../opentask-linux-x86_64.tar.gz opentask/
+          cd ..
+
+      - name: Locate Output Deb Package
+        id: find_deb
+        run: |
+          DEB_PATH=$(find src-tauri/target/release/bundle/deb -name "*.deb" | head -n 1)
+          echo "DEB_FILE=$DEB_PATH" >> $GITHUB_ENV
+          echo "Found DEB package: $DEB_PATH"
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: opentask-linux-packages
+          path: |
+            ${{ env.DEB_FILE }}
+            opentask-linux-x86_64.tar.gz
+          retention-days: 14
+
+      - name: Create GitHub Draft Release (Optional)
+        if: ${{ github.event.inputs.release_tag != '' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.release_tag }}
+          name: OpenTask ${{ github.event.inputs.release_tag }}
+          draft: true
+          files: |
+            ${{ env.DEB_FILE }}
+            opentask-linux-x86_64.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
