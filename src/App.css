@@ -1,0 +1,6 @@
+/* App-level overrides — layout fills handled via index.css */
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
