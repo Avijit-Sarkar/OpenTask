@@ -12,6 +12,8 @@ jobs:
   build-linux:
     name: Build Linux Desktop Packages (.deb & .tar.gz)
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Repository
