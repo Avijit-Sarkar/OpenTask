@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, Search, RefreshCw, Settings, Cpu, MemoryStick, HardDrive, Layers } from 'lucide-react';
+import { Search, RefreshCw, Settings, Cpu, MemoryStick, HardDrive, Layers } from 'lucide-react';
 import type { SystemStats } from '../types';
 import { formatBytes, formatCpu } from '../utils/formatters';
 import { Dropdown } from './Dropdown';
