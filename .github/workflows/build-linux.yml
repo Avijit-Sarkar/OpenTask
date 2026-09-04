@@ -96,13 +96,14 @@ jobs:
             opentask-linux-x86_64.tar.gz
           retention-days: 14
 
-      - name: Create GitHub Draft Release (Optional)
+      - name: Publish GitHub Release
         if: ${{ github.event.inputs.release_tag != '' }}
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.release_tag }}
           name: OpenTask ${{ github.event.inputs.release_tag }}
-          draft: true
+          draft: false
+          prerelease: false
           files: |
             ${{ env.DEB_FILE }}
             opentask-linux-x86_64.tar.gz
