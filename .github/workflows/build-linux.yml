@@ -52,7 +52,7 @@ jobs:
         run: npm ci
 
       - name: Build Application Binary and Deb Package
-        run: npx tauri build
+        run: npx @tauri-apps/cli build
 
       - name: Prepare Tarball Release Archive
         run: |
